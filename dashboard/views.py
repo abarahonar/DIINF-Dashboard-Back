@@ -28,6 +28,8 @@ def create(request):
 # @authentication_classes((JSONWebTokenAuthentication,))
 # @permission_classes((IsAuthenticated,))
 def list_apps(request):
+    if not App.objects.all():
+        create_dummys()
     apps = App.objects.all()
     serialized_apps = AppSerializer(apps, many=True)
     return JsonResponse(serialized_apps.data, safe=False)
@@ -50,20 +52,10 @@ def apps_by_user(request):
         user_apps = user.roles[0]['apps']
         for apps in user_apps:
             apps['_id'] = str(apps['_id'])
-        return JsonResponse(user_apps[0])
+        return JsonResponse(user_apps, safe=False)
 
 
 def create_dummys():
-    if not Customer.objects.all():
-        user = Customer.objects.create(username='JavieraAyala01', email='javiera.ayala.usach.cl', first_name='Javiera',
-                                    last_name='Ayala')
-        role = Role.objects.get(name='Rol 1')
-        print(role.apps)
-        serialized_role = RoleSerializer(role)
-        print(serialized_role.data)
-        user.roles = [serialized_role.data]
-        print('no')
-        user.save()
     if not App.objects.all():
         app1 = App.objects.create(name='App 1', url='url1')
         app2 = App.objects.create(name='App 2', url='url2')
@@ -79,5 +71,16 @@ def create_dummys():
 
         role.apps = [s1.data, s2.data]
         role.save()
+    if not Customer.objects.all():
+        user = Customer.objects.create(username='JavieraAyala01', email='javiera.ayala.usach.cl', first_name='Javiera',
+                                    last_name='Ayala')
+        role = Role.objects.get(name='Rol 1')
+        print(role.apps)
+        serialized_role = RoleSerializer(role)
+        print(serialized_role.data)
+        user.roles = [serialized_role.data]
+        print('no')
+        user.save()
+
 
     return

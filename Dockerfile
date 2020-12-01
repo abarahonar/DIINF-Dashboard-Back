@@ -5,7 +5,7 @@ FROM python:3.8.3-alpine
 RUN apk update && apk add gcc python3-dev musl-dev jpeg-dev zlib-dev libffi-dev
 
 # set work directory
-WORKDIR /usr/src/encryptor
+WORKDIR /usr/src/server
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1

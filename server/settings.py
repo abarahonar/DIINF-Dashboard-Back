@@ -89,12 +89,12 @@ DATABASES = {
                 }
             },
          },
-        'NAME': 'Pingeso',
+        'NAME': 'pingesodash',
         'CLIENT': {
-            'host': 'localhost',
+            'host': 'db',
             'port': 27017,
             'username': 'root',
-            'password': "bork",
+            'password': "pingeso",
             'authSource': 'admin',
             'authMechanism': 'SCRAM-SHA-1'
         }
