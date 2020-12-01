@@ -1,0 +1,69 @@
+version: '3.7'
+
+services:
+  db:
+    image: mongo:latest
+    container_name: db
+    environment:
+      - MONGO_INITDB_DATABASE=dashbork
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=bOrK
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo-entrypoint:/docker-entrypoint-initdb.d
+      # named volumes
+      - mongodb:/data/db
+      - mongoconfig:/data/configdb
+  rabbitmqsv:
+    container_name: rabbitmqsv
+    hostname: rabbitmq
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+    restart: on-failure
+    networks:
+      - app-network
+  web:
+    build:
+      context: .
+    restart: always
+    command: gunicorn server.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - static_volume:/home/app/web/static
+    expose:
+      - 8000
+    depends_on:
+      - rabbitmqsv
+    networks:
+      - app-network
+
+  celery_worker_enc:
+    command: sh -c "sleep 15 && celery -A server worker -l info"
+    build: .
+    container_name: celery_worker_enc
+    depends_on:
+      - web
+      - rabbitmqsv
+    hostname: celery_worker
+    restart: on-failure
+    networks:
+      - app-network
+
+  celery_beat_enc:
+      command: sh -c "sleep 15 && celery -A server beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+      build: .
+      container_name: celery_beat_enc
+      depends_on:
+        - web
+        - rabbitmqsv
+      hostname: celery_beat
+      restart: on-failure
+      networks:
+        - app-network
+
+volumes:
+  static_volume:
+networks:
+  app-network:
+    driver: bridge
