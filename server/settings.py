@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 
 # CORS Config
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = False
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Application definition
@@ -43,8 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_celery_beat',
-    'django_celery_results',
     'corsheaders',
     'dashboard'
 ]
@@ -97,7 +95,7 @@ DATABASES = {
          },
         'NAME': 'pingesodash',
         'CLIENT': {
-            'host': 'db',
+            'host': 'localhost',
             'port': 27017,
             'username': 'root',
             'password': "pingeso",

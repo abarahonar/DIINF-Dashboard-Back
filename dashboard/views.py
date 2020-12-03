@@ -24,6 +24,18 @@ def create(request):
     role.save()
     return
 
+
+@api_view(['GET'])
+# @authentication_classes((JSONWebTokenAuthentication,))
+# @permission_classes((IsAuthenticated,))
+def list_roles(request):
+    if not Role.objects.all():
+        create_dummys()
+    roles = Role.objects.all()
+    serialized_roles = RoleSerializer(roles, many=True)
+    return JsonResponse(serialized_roles.data, safe=False)
+
+
 @api_view(['GET'])
 # @authentication_classes((JSONWebTokenAuthentication,))
 # @permission_classes((IsAuthenticated,))
@@ -75,11 +87,8 @@ def create_dummys():
         user = Customer.objects.create(username='JavieraAyala01', email='javiera.ayala.usach.cl', first_name='Javiera',
                                     last_name='Ayala')
         role = Role.objects.get(name='Rol 1')
-        print(role.apps)
         serialized_role = RoleSerializer(role)
-        print(serialized_role.data)
         user.roles = [serialized_role.data]
-        print('no')
         user.save()
 
 
