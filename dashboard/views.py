@@ -16,6 +16,22 @@ from dashboard.models import App, Role, Customer, Message
 from dashboard.serializers import AppSerializer, RoleSerializer
 
 
+@api_view(['POST'])
+# @authentication_classes((JSONWebTokenAuthentication,))
+# @permission_classes((IsAuthenticated,))
+def edit_welcome_message(request):
+    message = request.POST.get('message', None)
+    if message is not None:
+        Message.objects.create(message=message, status='Alive')
+    return JsonResponse({}, safe=False)
+
+
+# Inputs: role_name
+@api_view(['GET'])
+def get_last_message(request):
+    message = Message.objects.filter(status='Alive').last()
+    return JsonResponse({'message': message.message}, status=HTTP_200_OK)
+
 
 # Inputs: role_name
 @api_view(['POST'])
@@ -87,6 +103,15 @@ def update_app(request):
     return JsonResponse({}, status=HTTP_200_OK)
 
 
+# Inputs: id, role_name
+@api_view(['POST'])
+def update_role(request):
+    role = Role.objects.get(pk=ObjectId(request.POST['id'].strip()))
+    new_role_name = request.POST.get('app_name', None)
+    role.name = new_role_name
+    role.save()
+    return JsonResponse({}, status=HTTP_200_OK)
+
 
 @api_view(['GET'])
 # @authentication_classes((JSONWebTokenAuthentication,))
@@ -110,15 +135,15 @@ def list_apps(request):
     return JsonResponse(serialized_apps.data, safe=False)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 # @authentication_classes((JSONWebTokenAuthentication,))
 # @permission_classes((IsAuthenticated,))
 def apps_by_user(request):
     if not Customer.objects.all():
         create_dummys()
 
-    # useremail = request.GET.get('email',None)
-    useremail = 'javiera.ayala.usach.cl'
+    useremail = request.POST.get('email', None)
+    #useremail = 'javiera.ayala.usach.cl'
     if useremail is not None:
         try:
             user = Customer.objects.get(email=useremail)
@@ -128,16 +153,6 @@ def apps_by_user(request):
         for apps in user_apps:
             apps['_id'] = str(apps['_id'])
         return JsonResponse(user_apps, safe=False)
-
-
-@api_view(['GET'])
-# @authentication_classes((JSONWebTokenAuthentication,))
-# @permission_classes((IsAuthenticated,))
-def edit_welcome_message(request):
-    message = request.POST.get('message', None)
-    if message is not None:
-        Message.objects.create(message=message, status='Alive')
-    return JsonResponse({}, safe=False)
 
 
 def create_dummys():
