@@ -19,3 +19,9 @@ class Customer(models.Model):
     first_name = models.CharField(max_length=200, null=True, blank=True)
     last_name = models.CharField(max_length=200, null=True, blank=True)
     roles = models.ArrayField(model_container=Role)
+
+
+class Message(models.Model):
+    _id = models.ObjectIdField()
+    message = models.TextField(null=True, blank=True)
+    status = models.CharField(max_length=50, null=True, blank=True)
