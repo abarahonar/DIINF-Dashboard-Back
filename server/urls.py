@@ -20,6 +20,7 @@ import dashboard.views as dash_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('list-apps', dash_views.list_apps),
+    path('list-roles', dash_views.list_roles),
     path('user-apps', dash_views.apps_by_user),
     path('create-app', dash_views.create_app),
     path('create-role', dash_views.create_role),
