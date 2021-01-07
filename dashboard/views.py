@@ -63,7 +63,7 @@ def delete_role(request):
     return JsonResponse({}, status=HTTP_200_OK)
 
 
-# Inputs: app_name, role_name
+# Inputs: app_name, app_url
 @api_view(['POST'])
 def create_app(request):
     print(request.body)
@@ -135,19 +135,20 @@ def list_apps(request):
     return JsonResponse(serialized_apps.data, safe=False)
 
 
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 # @authentication_classes((JSONWebTokenAuthentication,))
 # @permission_classes((IsAuthenticated,))
 def apps_by_user(request):
     if not Customer.objects.all():
         create_dummys()
 
-    useremail = request.POST.get('email', None)
-    #useremail = 'javiera.ayala.usach.cl'
+
+    # useremail = request.POST.get('email', None)
+    useremail = 'javiera.ayala.usach.cl'
     if useremail is not None:
         try:
             user = Customer.objects.get(email=useremail)
-        except User.DoesNotExist:
+        except Customer.DoesNotExist:
             pass
         user_apps = user.roles[0]['apps']
         for apps in user_apps:

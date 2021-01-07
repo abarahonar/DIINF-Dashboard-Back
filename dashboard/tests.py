@@ -23,7 +23,6 @@ class ListUserAppsTest(TestCase):
         response = views.apps_by_user(req)
         self.assertEqual(response.status_code, 200)
 
-
 # Authorization Test
 # Its successful if accepts an incoming request from XHRR
 class RoleListTest(TestCase):
@@ -32,4 +31,80 @@ class RoleListTest(TestCase):
         req = RequestFactory().get('/list-roles')
         response = views.list_roles(req)
         self.assertEqual(response.status_code, 200)
+
+
+# Authorization Test
+# Its successful if accepts an incoming request from XHRR
+class CreateApp(TestCase):
+
+    def test(self):
+        req = RequestFactory().post('/create-role', {'app_name': 'App 1', 'app_url': 'url 1'})
+        response = views.create_app(req)
+        self.assertEqual(response.status_code, 200)
+
+
+# Authorization Test
+# Its successful if accepts an incoming request from XHR
+class CreateRole(TestCase):
+
+    def test(self):
+        req = RequestFactory().post('/create-role', {'role_name': 'Rol 1'})
+        response = views.create_role(req)
+        self.assertEqual(response.status_code, 200)
+
+
+# Authorization Test
+# Its successful if accepts an incoming request from XHRR
+class AddAppToRole(TestCase):
+
+    def test(self):
+        new_app = RequestFactory().post('/create-role', {'app_name': 'App 1', 'app_url': 'url 1'})
+        new_role = RequestFactory().post('/create-role', {'role_name': 'Rol 1'})
+        response = views.create_app(new_app)
+        response_role = views.create_role(new_role)
+        role = Role.objects.get(name='Rol 1')
+        app = App.objects.get(name='App 1', url='url 1')
+        new_role = RequestFactory().post('/create-role', {'app_id': app.pk, 'role_id': role.pk})
+        final = views.add_app_to_role(new_role)
+        self.assertEqual(final.status_code, 200)
+
+
+# Authorization Test
+# Its successful if accepts an incoming request from XHRR
+class UpdateApp(TestCase):
+
+    def test(self):
+        create_app =  RequestFactory().post('/create-app', {'app_name': 'App 1', 'app_url': 'url 1'})
+        response = views.create_app(create_app)
+        app = App.objects.get(name='App 1', url='url 1')
+        new_app = RequestFactory().post('/create-role', {'id': app.pk, 'app_name': 'App 2', 'app_url': 'url 2'})
+        final = views.update_app(new_app)
+        self.assertEqual(final.status_code, 200)
+
+
+# Authorization Test
+# Its successful if accepts an incoming request from XHRR
+class DeleteApp(TestCase):
+
+    def test(self):
+        create_app =  RequestFactory().post('/create-app', {'app_name': 'App 1', 'app_url': 'url 1'})
+        response = views.create_app(create_app)
+        app = App.objects.get(name='App 1', url='url 1')
+        new_app = RequestFactory().post('/create-role', {'id': app.pk})
+        final = views.delete_app(new_app)
+        self.assertEqual(final.status_code, 200)
+
+
+# Authorization Test
+# Its successful if accepts an incoming request from XHRR
+class DeleteRole(TestCase):
+
+    def test(self):
+        create_app = RequestFactory().post('/create-role', {'role_name': 'Rol X'})
+        views.create_role(create_app)
+        role = Role.objects.get(name='Rol X')
+        delete_role = RequestFactory().post('/delete-role', {'id': role.pk})
+        final = views.delete_role(delete_role)
+        self.assertEqual(final.status_code, 200)
+
 

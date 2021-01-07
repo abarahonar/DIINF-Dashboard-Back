@@ -12,6 +12,7 @@ class Role(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
     apps = models.ArrayField(model_container=App)
 
+
 class Customer(models.Model):
     _id = models.ObjectIdField()
     email = models.CharField(max_length=60, null=True, blank=True)
