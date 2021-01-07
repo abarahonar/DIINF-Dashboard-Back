@@ -95,7 +95,7 @@ DATABASES = {
          },
         'NAME': 'pingesodash',
         'CLIENT': {
-            'host': 'localhost',
+            'host': 'db',
             'port': 27017,
             'username': 'root',
             'password': "pingeso",

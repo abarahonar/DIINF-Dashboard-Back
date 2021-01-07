@@ -1,46 +1,24 @@
 version: '3.7'
 
 services:
-  nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    ports:
-      - 80:80
-    volumes:
-      - static_volume:/home/app/web/static
-    depends_on:
-      - web_pingeso
-    networks:
-      - app-network
   db:
     image: mongo:latest
-    container_name: ping_db
+    container_name: db_pingeso
     environment:
-      - MONGO_INITDB_DATABASE=pingesodash
+      - MONGO_INITDB_DATABASE=dashbork
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=pingeso
     ports:
       - "27017:27017"
     volumes:
       - ./mongo-entrypoint:/docker-entrypoint-initdb.d
-      # named volumes
+        # named volumes
       - mongodb:/data/db
       - mongoconfig:/data/configdb
-    networks:
-      - app-network
-  rabbitmqsv:
-    container_name: ping_rabbitmqsv
-    hostname: rabbitmq
-    image: rabbitmq:latest
-    ports:
-      - "5672:5672"
-    restart: on-failure
-    networks:
-      - app-network
-  web_pingeso:
+  webapp:
     build:
       context: .
+      dockerfile: Dockerfile
     restart: always
     command: gunicorn server.wsgi:application --bind 0.0.0.0:8000
     volumes:
@@ -48,38 +26,19 @@ services:
     expose:
       - 8000
     depends_on:
-      - rabbitmqsv
-    networks:
-      - app-network
+      - db
 
-  celery_worker_pingeso:
-    command: sh -c "sleep 15 && celery -A server worker -l info"
-    build: .
-    container_name: celery_worker_pingeso
+  nginx:
+    build:
+      context: ./nginx/
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    volumes:
+      - static_volume:/home/app/web/static
     depends_on:
-      - web_pingeso
-      - rabbitmqsv
-    hostname: celery_worker
-    restart: on-failure
-    networks:
-      - app-network
-
-  celery_beat_pingeso:
-      command: sh -c "sleep 15 && celery -A server beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
-      build: .
-      container_name: celery_beat_pingeso
-      depends_on:
-        - web_pingeso
-        - rabbitmqsv
-      hostname: celery_beat
-      restart: on-failure
-      networks:
-        - app-network
-
+      - webapp
 volumes:
   static_volume:
   mongodb:
   mongoconfig:
-networks:
-  app-network:
-    driver: bridge

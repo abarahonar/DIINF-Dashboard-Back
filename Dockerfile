@@ -2,17 +2,17 @@
 # pull official base image
 FROM python:3.8.3-alpine
 
-RUN apk update && apk add gcc python3-dev musl-dev jpeg-dev zlib-dev libffi-dev
+RUN apk update && apk add gcc libxml2-dev libxslt-dev python3-dev musl-dev jpeg-dev zlib-dev libffi-dev openssl-dev make
 
 # set work directory
-WORKDIR /usr/src/server
+WORKDIR /usr/src/encryptor
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # install dependencies
-RUN pip install --upgrade pip
+RUN pip3 install --upgrade pip
 
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
