@@ -20,11 +20,12 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: always
-    command: gunicorn server.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn --certfile=/etc/certs/localhost.crt --keyfile=/etc/certs/localhost.key server.wsgi:application --bind 0.0.0.0:443
     volumes:
       - static_volume:/home/app/web/static
+      - /nginx/config/:/etc/certs
     expose:
-      - 8000
+      - 443
     depends_on:
       - db
 
@@ -36,6 +37,7 @@ services:
       - 80:80
     volumes:
       - static_volume:/home/app/web/static
+      - /config/:/etc/nginx/conf.d
     depends_on:
       - webapp
 volumes:
