@@ -25,7 +25,7 @@ services:
       - static_volume:/home/app/web/static
       - ./nginx/config/:/etc/certs
     ports:
-      - 443:443
+      - 444:443
     depends_on:
       - db
 
