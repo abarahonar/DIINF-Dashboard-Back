@@ -182,7 +182,7 @@ def apps_by_user(request):
     roles = data['result']
     for role in roles:
         try:
-            # hacer wea de query
+            pass# hacer wea de query
         except Exception as e:
             print(e)
     return JsonResponse({'rol': roles})
