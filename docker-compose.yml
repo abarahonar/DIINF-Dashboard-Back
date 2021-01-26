@@ -23,12 +23,13 @@ services:
     command: gunicorn --certfile=/etc/certs/localhost.crt --keyfile=/etc/certs/localhost.key server.wsgi:application --bind 0.0.0.0:443
     volumes:
       - static_volume:/home/app/web/static
-      - /nginx/config/:/etc/certs
-    expose:
-      - 443
+      - ./nginx/config/:/etc/certs
+    ports:
+      - 443:443
     depends_on:
       - db
 
+  # Nginx no esta funcionando, tuve que hacer conectarme directamente a Django
   nginx:
     build:
       context: ./nginx/

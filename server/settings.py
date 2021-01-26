@@ -27,7 +27,8 @@ SECRET_KEY = 'f3d$g8maqpy5zpx2z1x09wn_n6@d9y*s#@e&i+gq*efugyqn61'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Esto tiene que ser obtenido a traves de variable de entorno
+ALLOWED_HOSTS = ['.catteam.tk']
 
 # CORS Config
 CORS_ORIGIN_ALLOW_ALL = True

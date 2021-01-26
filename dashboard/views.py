@@ -1,9 +1,20 @@
 import json
+import urllib.request
+
+# Necesario para conexiones inseguras
+import ssl
+CONTEXT = ssl._create_unverified_context()
+
+# Necesario para conectarse al sistema
+URL = "https://back.catteam.tk/authorize"
+HEADERS = {'Content-Type': 'application/json'}
+
 
 from bson import ObjectId
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.core import serializers
 
 # Create your views here.
 from rest_framework import status
@@ -117,11 +128,29 @@ def update_role(request):
 # @authentication_classes((JSONWebTokenAuthentication,))
 # @permission_classes((IsAuthenticated,))
 def list_roles(request):
+    """
+    Funcion modificada, originalmente no estaba retornando un JSON valido, no pude lograr que el serializer de Role retorne un json valido, por 
+    lo que creo un diccionario aca mismo y lo relleno. Unica forma que encontre de retornar un JSON valido. Por lo que pude averiguar, Python en general
+    tiene problemas con convertir objetos y arreglos anidados a JSON. 
+    """
     if not Role.objects.all():
         create_dummys()
     roles = Role.objects.all()
-    serialized_roles = RoleSerializer(roles, many=True)
-    return JsonResponse(serialized_roles.data, safe=False)
+
+    # Creacion del diccionario
+    json_data = []
+    for role in roles:
+        role_data = {'_id': str(role._id), 'name': role.name, 'apps': []}
+        for app in role.apps:
+            app_data = {
+                '_id': str(app['_id']),
+                'name': app['name'],
+                'url': app['url']
+            }
+            role_data['apps'].append(app_data)
+        json_data.append(role_data)
+
+    return JsonResponse(json_data, safe=False)
 
 
 @api_view(['GET'])
@@ -139,46 +168,47 @@ def list_apps(request):
 # @authentication_classes((JSONWebTokenAuthentication,))
 # @permission_classes((IsAuthenticated,))
 def apps_by_user(request):
-    if not Customer.objects.all():
-        create_dummys()
+    token = request.COOKIES.get('DIINFAUTH2USERTOKEN', None)
 
-
-    # useremail = request.POST.get('email', None)
-    useremail = 'javiera.ayala.usach.cl'
-    if useremail is not None:
+    try:
+        payload = json.dumps({'idToken': token}).encode("utf-8")
+        req = urllib.request.Request(URL, payload, HEADERS)
+        with urllib.request.urlopen(req, context=CONTEXT) as f:
+            response = f.read()
+        json_data = response.decode()
+        data = json.loads(json_data)
+    except Exception as e:
+        print(e)
+    roles = data['result']
+    for role in roles:
         try:
-            user = Customer.objects.get(email=useremail)
-        except Customer.DoesNotExist:
-            pass
-        user_apps = user.roles[0]['apps']
-        for apps in user_apps:
-            apps['_id'] = str(apps['_id'])
-        return JsonResponse(user_apps, safe=False)
+            # hacer wea de query
+        except Exception as e:
+            print(e)
+    return JsonResponse({'rol': roles})
+
+#    useremail = 'javiera.ayala.usach.cl'
+#    if useremail is not None:
+#        try:
+#            user = Customer.objects.get(email=useremail)
+#        except Customer.DoesNotExist:
+#            pass
+#        user_apps = user.roles[0]['apps']
+#        for apps in user_apps:
+#            apps['_id'] = str(apps['_id'])
+#        return JsonResponse(user_apps, safe=False)
 
 
 def create_dummys():
     if not App.objects.all():
-        app1 = App.objects.create(name='App 1', url='url1')
-        app2 = App.objects.create(name='App 2', url='url2')
+        app1 = App.objects.create(name='Google', url='//google.cl')
+        app2 = App.objects.create(name='Facebook', url='//facebook.com')
 
         s1 = AppSerializer(app1)
         s2 = AppSerializer(app2)
 
-        role, created = Role.objects.get_or_create(name='Rol 1')
-
-        #apps = role.apps
-        # apps.append(s.data)
-        #role.apps = apps
+        role, created = Role.objects.get_or_create(name='Alumno')
 
         role.apps = [s1.data, s2.data]
         role.save()
-    if not Customer.objects.all():
-        user = Customer.objects.create(username='JavieraAyala01', email='javiera.ayala.usach.cl', first_name='Javiera',
-                                    last_name='Ayala')
-        role = Role.objects.get(name='Rol 1')
-        serialized_role = RoleSerializer(role)
-        user.roles = [serialized_role.data]
-        user.save()
-
-
     return
