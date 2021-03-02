@@ -2,7 +2,6 @@ import json
 import ssl
 import urllib.request
 
-import requests
 from bson import ObjectId
 from django.contrib.auth.models import User
 from django.http import JsonResponse
