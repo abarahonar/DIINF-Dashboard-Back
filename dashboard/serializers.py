@@ -8,6 +8,7 @@ class AppSerializer(serializers.ModelSerializer):
         model = App
         fields = ('_id', 'name', 'url')
 
+
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role

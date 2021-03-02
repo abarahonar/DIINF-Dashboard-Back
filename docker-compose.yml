@@ -15,17 +15,18 @@ services:
         # named volumes
       - mongodb:/data/db
       - mongoconfig:/data/configdb
+
   webapp:
     build:
       context: .
       dockerfile: Dockerfile
     restart: always
-    command: gunicorn --certfile=/etc/certs/localhost.crt --keyfile=/etc/certs/localhost.key server.wsgi:application --bind 0.0.0.0:443
+    command: gunicorn server.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/home/app/web/static
-      - /nginx/config/:/etc/certs
+      - certs:/etc/certs/
     expose:
-      - 443
+      - 8000
     depends_on:
       - db
 
@@ -35,12 +36,21 @@ services:
       dockerfile: Dockerfile
     ports:
       - 80:80
+      - 443:443
     volumes:
       - static_volume:/home/app/web/static
-      - /config/:/etc/nginx/conf.d
+      - config/:/etc/nginx/conf.d
+      - certs:/etc/certs/
     depends_on:
       - webapp
 volumes:
   static_volume:
+  config:
+  certs:
+    driver: local
+    driver_opts:
+      type: none
+      device: nginx/config/
+      o: bind
   mongodb:
   mongoconfig:
