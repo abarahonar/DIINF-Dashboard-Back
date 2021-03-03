@@ -162,7 +162,7 @@ def apps_by_user(request):
     except Role.DoesNotExist:
         role = create_dummy_roles(user_role)
     serialized_apps = RoleSerializer(role)
-    return JsonResponse({'res': serialized_apps.data['apps']}, safe=False)
+    return JsonResponse({'res': serialized_apps.data}, safe=False)
 
 
 def create_dummy_roles(role_name):
