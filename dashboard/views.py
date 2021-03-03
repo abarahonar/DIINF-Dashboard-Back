@@ -167,9 +167,9 @@ def apps_by_user(request):
 
 def create_dummy_roles(role_name):
     app1, _ = App.objects.get_or_create(name='Facebook', url='https://www.facebook.com',
-                                        imgurl='https://www.facebook.com/images/fb_icon_325x325.png')
+                                        img='https://www.facebook.com/images/fb_icon_325x325.png')
     app2, _ = App.objects.get_or_create(name='Google', url='https://www.google.com',
-                                        imgurl='https://elegirhoy.com/uploads/fichas-eventos-imagenes/la-fundacion-de-google.png')
+                                        img='https://elegirhoy.com/uploads/fichas-eventos-imagenes/la-fundacion-de-google.png')
 
     s1 = AppSerializer(app1)
     s2 = AppSerializer(app2)
