@@ -127,7 +127,8 @@ def list_roles(request):
     roles = Role.objects.all()
     print(roles)
     for role in roles:
-        print(role)
+        print(role.name)
+        print(role.apps)
     serialized_roles = RoleSerializer(roles, many=True)
     print(serialized_roles.data)
     return JsonResponse(serialized_roles.data, safe=False)
