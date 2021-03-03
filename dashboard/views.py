@@ -149,7 +149,6 @@ def apps_by_user(request):
     token = request.COOKIES.get('DIINFAUTH2USERTOKEN', None)
 
     if token is None:
-        print('none')
         return JsonResponse({'res': 'Cookie not found'}, status=500)
     # token = 'eyJhbGciOiJSUzI1NiIsImtpZCI6InRCME0yQSJ9.eyJpc3MiOiJodHRwczovL3Nlc3Npb24uZmlyZWJhc2UuZ29vZ2xlLmNvbS90aW5nZXNvLTU1ODgwIiwibmFtZSI6ImtldmluIHZpbGxhbG9ib3Mgc29yaWFubyIsInBpY3R1cmUiOiJodHRwczovL2xoNS5nb29nbGV1c2VyY29udGVudC5jb20vLUlSdzdJMWdfM0ZzL0FBQUFBQUFBQUFJL0FBQUFBQUFBQUFBL0FNWnV1Y25TdWNjOW5PWDBMOTZhelc4NGRkdldSejltTEEvczk2LWMvcGhvdG8uanBnIiwiYXVkIjoidGluZ2Vzby01NTg4MCIsImF1dGhfdGltZSI6MTYxNDYzMjcwNSwidXNlcl9pZCI6ImFWbkNlREtLeUloMWdPc2tmMzNQSHRackM1bzIiLCJzdWIiOiJhVm5DZURLS3lJaDFnT3NrZjMzUEh0WnJDNW8yIiwiaWF0IjoxNjE0NjMyNzA4LCJleHAiOjE2MTUwNjQ3MDgsImVtYWlsIjoia2V2aW4udmlsbGFsb2Jvc0B1c2FjaC5jbCIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7Imdvb2dsZS5jb20iOlsiMTE3MzgwOTU0NDc0NTkyMzM0NDIwIl0sImVtYWlsIjpbImtldmluLnZpbGxhbG9ib3NAdXNhY2guY2wiXX0sInNpZ25faW5fcHJvdmlkZXIiOiJnb29nbGUuY29tIn19.NIafkU2R5iFEvynKKt7iBVlV4NsYk5VUay9TF0Tf8o2ORux_1lxH_54NyeVS5CWhCM7y9CD5fCDwvG1dJrmn1oGO_rc3nJwsNzitx7CDBb_ax2Mducs2slEKw386cLOu_7aO_xw55x1YgBd61cFGl6dytUvVdueWbFQhC8KYJWyGOvqN3lGWSuvkMUPSlxRTRcza2j0X9uRUSx7PX-LpO1j23-k6GbtnLc5EbfLFOTJJnrr9RbRGuF1LuhSQDNWBGtViKoT63BObV05_WrgK2POzqDlXvbtUgjRFCyn4555Y-eH1hhxI60ClNsmFv8eHjgtAQJGPp25-K0SQP5-JuQ'
 
@@ -158,12 +157,11 @@ def apps_by_user(request):
     with urllib.request.urlopen(req, context=CONTEXT) as f:
         response = f.read()
     json_data = response.decode()
-    user_role = json.loads(json_data)['result'][0]
-    try:
-        role = Role.objects.get(name=user_role)
-    except Role.DoesNotExist:
-        role = create_dummy_roles(user_role)
-    serialized_apps = RoleSerializer(role)
+    user_roles = json.loads(json_data)['result']
+    roles = Role.objects.filter(name__in=user_roles)
+    if not roles:
+        pass
+    serialized_apps = RoleSerializer(roles, many=True)
     return JsonResponse({'res': serialized_apps.data}, safe=False)
 
 
