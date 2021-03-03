@@ -168,10 +168,16 @@ def apps_by_user(request):
 
 
 def create_dummy_roles(role_name):
-    app1, _ = App.objects.get_or_create(name='Facebook', url='https://www.facebook.com',
-                                        img='https://www.facebook.com/images/fb_icon_325x325.png')
-    app2, _ = App.objects.get_or_create(name='Google', url='https://www.google.com',
-                                        img='https://elegirhoy.com/uploads/fichas-eventos-imagenes/la-fundacion-de-google.png')
+    if role_name == 'Alumno':
+        app1, _ = App.objects.get_or_create(name='Facebook', url='https://www.facebook.com',
+                                            img='https://www.facebook.com/images/fb_icon_325x325.png')
+        app2, _ = App.objects.get_or_create(name='Google', url='https://www.google.com',
+                                            img='https://elegirhoy.com/uploads/fichas-eventos-imagenes/la-fundacion-de-google.png')
+    else:
+        app1, _ = App.objects.get_or_create(name='Youtube', url='https://www.youtube.com',
+                                            img='https://play-lh.googleusercontent.com/lMoItBgdPPVDJsNOVtP26EKHePkwBg-PkuY9NOrc-fumRtTFP4XhpUNk_22syN4Datc')
+        app2, _ = App.objects.get_or_create(name='Twitter', url='https://www.twitter.com',
+                                            img='https://play-lh.googleusercontent.com/J8k5q78xv4R8Smi4vOE6iUphLvOz0efC-0lzoyGfd0KRUlAv4ekuCtlss6KBN-tMvEw')
 
     s1 = AppSerializer(app1)
     s2 = AppSerializer(app2)
