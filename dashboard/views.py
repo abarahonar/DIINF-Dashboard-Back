@@ -73,7 +73,8 @@ def create_app(request):
     print(request.body)
     app_name = request.POST['app_name']
     app_url = request.POST['app_url']
-    App.objects.create(name=app_name, url=app_url)
+    img_url = request.POST['img']
+    App.objects.create(name=app_name, url=app_url, img=img_url)
     return JsonResponse({}, status=HTTP_200_OK)
 
 
