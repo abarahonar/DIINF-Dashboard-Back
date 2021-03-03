@@ -78,6 +78,7 @@ def create_app(request):
 
 
 # Inputs: app id 'id'
+@api_view(['POST'])
 def delete_app(request):
     roles = Role.objects.filter(apps={'_id': request.POST['id'].strip()})
     for role in roles:
