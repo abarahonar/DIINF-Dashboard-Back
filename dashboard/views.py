@@ -158,7 +158,7 @@ def apps_by_user(request):
     json_data = response.decode()
     user_role = json.loads(json_data)['result'][0]
     try:
-        role = Role.objects.get(name=user_role).delete()
+        role = Role.objects.get(name=user_role)
     except Role.DoesNotExist:
         role = create_dummy_roles(user_role)
     serialized_apps = RoleSerializer(role)
