@@ -27,7 +27,7 @@ def edit_welcome_message(request):
     message = request.POST.get('message', None)
     if message is not None:
         Message.objects.create(message=message, status='Alive')
-    return JsonResponse({}, safe=False)
+    return JsonResponse({}, status=HTTP_200_OK, safe=False)
 
 
 # Inputs: role_name
@@ -125,7 +125,9 @@ def list_roles(request):
     if not Role.objects.all():
         create_dummys()
     roles = Role.objects.all()
+    print(roles)
     serialized_roles = RoleSerializer(roles, many=True)
+    print(serialized_roles.data)
     return JsonResponse(serialized_roles.data, safe=False)
 
 
