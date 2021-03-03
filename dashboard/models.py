@@ -5,6 +5,7 @@ class App(models.Model):
     _id = models.ObjectIdField()
     name = models.CharField(max_length=200, null=True, blank=True)
     url = models.CharField(max_length=50, null=True, blank=True)
+    img = models.TextField(null=True, blank=True)
 
 
 class Role(models.Model):
