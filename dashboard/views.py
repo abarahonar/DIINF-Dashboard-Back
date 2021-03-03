@@ -126,6 +126,8 @@ def list_roles(request):
         create_dummys()
     roles = Role.objects.all()
     print(roles)
+    for role in roles:
+        print(role)
     serialized_roles = RoleSerializer(roles, many=True)
     print(serialized_roles.data)
     return JsonResponse(serialized_roles.data, safe=False)
