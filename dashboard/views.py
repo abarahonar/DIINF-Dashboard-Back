@@ -41,7 +41,7 @@ def get_last_message(request):
 @api_view(['POST'])
 def create_role(request):
     role_name = request.POST['role_name']
-    Role.objects.create(name=role_name)
+    Role.objects.create(name=role_name, apps=[])
     return JsonResponse({}, status=HTTP_200_OK)
 
 
@@ -125,10 +125,7 @@ def list_roles(request):
     if not Role.objects.all():
         create_dummys()
     roles = Role.objects.all()
-    print(roles)
-    for role in roles:
-        print(role.name)
-        print(role.apps)
+    roles[1].delete()
     serialized_roles = RoleSerializer(roles, many=True)
     print(serialized_roles.data)
     return JsonResponse(serialized_roles.data, safe=False)
