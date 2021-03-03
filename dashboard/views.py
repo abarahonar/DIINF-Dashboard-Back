@@ -70,7 +70,6 @@ def delete_role(request):
 # Inputs: app_name, app_url
 @api_view(['POST'])
 def create_app(request):
-    print(request.body)
     app_name = request.POST['app_name']
     app_url = request.POST['app_url']
     img_url = request.POST['img']
