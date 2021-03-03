@@ -157,6 +157,7 @@ def apps_by_user(request):
         response = f.read()
     json_data = response.decode()
     user_role = json.loads(json_data)['result'][0]
+    App.objects.all().delete()
     try:
         role = Role.objects.get(name=user_role)
     except Role.DoesNotExist:

@@ -6,7 +6,7 @@ from dashboard.models import App, Customer, Role
 class AppSerializer(serializers.ModelSerializer):
     class Meta:
         model = App
-        fields = ('_id', 'name', 'url')
+        fields = ('_id', 'name', 'url', 'img')
 
 
 class RoleSerializer(serializers.ModelSerializer):
