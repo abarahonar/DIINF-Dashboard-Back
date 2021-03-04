@@ -85,7 +85,6 @@ def delete_app(request):
     roles = Role.objects.filter(apps={'_id': request.POST['id'].strip()})
     for role in roles:
         new_apps = []
-        print(role.apps)
         for app in role.apps:
             if app['_id'] == ObjectId(request.POST['id'].strip()):
                 continue
@@ -133,7 +132,6 @@ def list_roles(request):
         create_dummys()
     roles = Role.objects.all()
     serialized_roles = RoleSerializer(roles, many=True)
-    print(serialized_roles.data)
     return JsonResponse(serialized_roles.data, safe=False)
 
 
