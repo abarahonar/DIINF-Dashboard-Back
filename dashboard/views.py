@@ -102,11 +102,11 @@ def update_app(request):
     new_app_name = request.POST.get('app_name', None)
     new_app_url = request.POST.get('app_url', None)
     new_img_url = request.POST.get('img', None)
-    if new_app_name is not None or new_app_name != '':
+    if new_app_name is not None and new_app_name != '':
         app.name = new_app_name
-    if new_app_url is not None or new_app_url != '':
+    if new_app_url is not None and new_app_url != '':
         app.url = new_app_url
-    if new_img_url is not None or new_img_url != '':
+    if new_img_url is not None and new_img_url != '':
         app.img = new_img_url
     app.save()
     return JsonResponse({}, status=HTTP_200_OK)
