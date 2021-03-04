@@ -29,6 +29,6 @@ urlpatterns = [
     path('delete-role', dash_views.delete_role),
     path('update-app', dash_views.update_app),
     path('create-message', dash_views.edit_welcome_message),
-    path('get-message', dash_views.get_last_message)
-    #path('edit-role', dash_views.delete_role),
+    path('get-message', dash_views.get_last_message),
+    path('edit-role', dash_views.update_role)
 ]

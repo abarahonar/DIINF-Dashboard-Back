@@ -63,6 +63,7 @@ def add_app_to_role(request):
 
 
 # Inputs: id
+@api_view(['POST'])
 def delete_role(request):
     Role.objects.get(pk=ObjectId(request.POST['id'].strip())).delete()
     return JsonResponse({}, status=HTTP_200_OK)
@@ -73,7 +74,7 @@ def delete_role(request):
 def create_app(request):
     app_name = request.POST['app_name']
     app_url = request.POST['app_url']
-    img_url = request.POST['img']
+    img_url = request.POST['app_img']
     App.objects.create(name=app_name, url=app_url, img=img_url)
     return JsonResponse({}, status=HTTP_200_OK)
 
@@ -117,6 +118,8 @@ def update_app(request):
 def update_role(request):
     role = Role.objects.get(pk=ObjectId(request.POST['id'].strip()))
     new_role_name = request.POST.get('app_name', None)
+    if new_role_name is None:
+        return JsonResponse({'res': 'No name provided'}, status=500)
     role.name = new_role_name
     role.save()
     return JsonResponse({}, status=HTTP_200_OK)
